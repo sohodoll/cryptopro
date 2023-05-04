@@ -1,2 +1,2 @@
-# cryptopro
-Crypto calculator
+# vite-ts-react-build
+Vite + TS + React template
