@@ -1,5 +1,7 @@
 .header {
   grid-area: header;
+  width: 70%;
+  margin: 0 auto;
   height: 40px;
   display: flex;
   justify-content: space-between;

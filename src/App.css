@@ -20,4 +20,5 @@ body {
   display: grid;
   grid-template-areas: 'header header' 'main main' ' footer footer';
   grid-template-rows: auto 1fr auto;
+  position: relative;
 }
