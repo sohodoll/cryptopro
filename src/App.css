@@ -1,1 +1,23 @@
+@import url('https://fonts.googleapis.com/css2?family=Baloo+Thambi+2:wght@400;500;600;700;800&display=swap');
 
+* {
+  user-select: none;
+}
+
+html,
+body,
+.wrapper,
+#root {
+  height: 100%;
+}
+
+body {
+  font-family: 'Baloo Thambi 2';
+  height: 100%;
+}
+
+.wrapper {
+  display: grid;
+  grid-template-areas: 'header header' 'main main' ' footer footer';
+  grid-template-rows: auto 1fr auto;
+}

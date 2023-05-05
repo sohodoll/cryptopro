@@ -10,6 +10,7 @@ const getAlias = (aliases: string[]): AliasOptions =>
   }));
 
 const alias: AliasOptions = getAlias([
+  'api',
   'assets',
   'constants',
   'components',
