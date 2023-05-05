@@ -1,4 +1,13 @@
 .footer {
   grid-area: footer;
   background-color: aqua;
+  width: 50%;
+  margin: 0 auto;
+  background-color: black;
+  border-top-right-radius: 20px;
+  border-top-left-radius: 20px;
+  height: 20px;
+  color: white;
+  display: flex;
+  justify-content: center;
 }
