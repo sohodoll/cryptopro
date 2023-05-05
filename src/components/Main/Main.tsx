@@ -1,4 +1,5 @@
 import { coinsList } from 'api/getCoins';
+import { fullCoinsList } from 'api/getCoinsList';
 import { useState, useEffect } from 'react';
 import { getCoinCoefficient } from 'api/getCoinCoefficient';
 import bg from 'assets/images/bitcoin-bg.png';
@@ -50,11 +51,54 @@ export function Main() {
 
   const [searchPrompt, setSearchPrompt] = useState('');
   const [searchAmount, setSearchAmount] = useState(0);
+  const [searchResult, setSearchResult] = useState(0);
+  const [fromSearchCurrency, setFromSearchCurrency] = useState(defaultCurrency);
+  const [intoSearchCurrency, setIntoSearchCurrency] = useState(defaultCurrency);
+  const [fromSearchCurrencyPrice, setFromSearchCurrencyPrice] = useState(0);
+  const [intoSearchCurrencyPrice, setIntoSearchCurrencyPrice] = useState(0);
+
+  const matchCoinSymbol = (symbol: string) => {
+    const coinObject = fullCoinsList.filter(
+      (coin: CoinType) => coin.symbol === symbol
+    );
+    return coinObject[0].id;
+  };
 
   const onSearchButtonClick = () => {
     const searchArray = searchPrompt.split(' ');
     setSearchAmount(Number(searchArray[0]));
+    setFromSearchCurrency(matchCoinSymbol(searchArray[1]));
+    setIntoSearchCurrency(matchCoinSymbol(searchArray[3]));
+
+    setTimeout(() => {
+      const calculationResult =
+        searchAmount * (fromSearchCurrencyPrice / intoSearchCurrencyPrice);
+
+      setSearchResult(parseFloat(calculationResult.toFixed(2)));
+    }, 2000);
   };
+
+  useEffect(() => {
+    async function getPrice() {
+      const fromSearchCoinPricePromise = await getCoinCoefficient(
+        fromSearchCurrency
+      );
+      const intoSearchCoinPricePromise = await getCoinCoefficient(
+        intoSearchCurrency
+      );
+
+      const fromSearchCoinPrice = await fromSearchCoinPricePromise;
+      const intoSearchCoinPrice = await intoSearchCoinPricePromise;
+
+      setFromSearchCurrencyPrice(
+        await fromSearchCoinPrice[fromSearchCurrency].usd
+      );
+      setIntoSearchCurrencyPrice(
+        await intoSearchCoinPrice[intoSearchCurrency].usd
+      );
+    }
+    getPrice();
+  }, [fromSearchCurrency, intoSearchCurrency]);
 
   return (
     <div className={styles.main}>
@@ -64,7 +108,7 @@ export function Main() {
           <div className="flex gap-4 items-center relative text-gray-600 focus-within:text-gray-400">
             <span className="absolute inset-y-0 left-0 flex items-center pl-2">
               <button
-                type="submit"
+                type="button"
                 className="p-1 focus:outline-none focus:shadow-outline"
               >
                 <svg
@@ -100,6 +144,9 @@ export function Main() {
             >
               Calculate
             </button>
+          </div>
+          <div id="search-result">
+            <span>{searchResult}</span>
           </div>
         </form>
       </div>
