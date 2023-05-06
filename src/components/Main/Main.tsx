@@ -1,23 +1,15 @@
-import { coinsList } from 'api/getCoins';
-import { fullCoinsList } from 'api/getCoinsList';
+import { getTrendingCoinsList } from 'api/getTrendingCoinsList';
+import { getFullCoinsList } from 'api/getFullCoinsList';
 import { useState, useEffect } from 'react';
-import { getCoinCoefficient } from 'api/getCoinCoefficient';
+import { getCoinUsdPrice } from 'api/getCoinUsdPrice';
 import bg from 'assets/images/bitcoin-bg.png';
 import styles from './styles.module.css';
 
-type CoinType = {
-  id: string;
-  name: string;
-  symbol: string;
-};
+const trendingCoinsList = await getTrendingCoinsList();
+const fullCoinsList = await getFullCoinsList();
+const defaultCurrency: string = trendingCoinsList.coins[0].item.id;
 
-type CoinObjectType = {
-  item: CoinType;
-};
-
-const defaultCurrency = coinsList.coins[0].item.id;
-
-const coinsElements = coinsList.coins.map((coin: CoinObjectType) => (
+const coinsElements = trendingCoinsList.coins.map((coin) => (
   <option key={coin.item.id}>{coin.item.id}</option>
 ));
 
@@ -31,14 +23,11 @@ export function Main() {
 
   useEffect(() => {
     async function getPrice() {
-      const fromCoinPricePromise = await getCoinCoefficient(fromCurrency);
-      const intoCoinPricePromise = await getCoinCoefficient(intoCurrency);
+      const fromCoinPrice = await getCoinUsdPrice(fromCurrency);
+      const intoCoinPrice = await getCoinUsdPrice(intoCurrency);
 
-      const fromCoinPrice = await fromCoinPricePromise;
-      const intoCoinPrice = await intoCoinPricePromise;
-
-      setFromCurrencyPrice(await fromCoinPrice[fromCurrency].usd);
-      setIntoCurrencyPrice(await intoCoinPrice[intoCurrency].usd);
+      setFromCurrencyPrice(fromCoinPrice[fromCurrency].usd);
+      setIntoCurrencyPrice(intoCoinPrice[intoCurrency].usd);
     }
     getPrice();
   }, [fromCurrency, intoCurrency]);
@@ -58,9 +47,7 @@ export function Main() {
   const [intoSearchCurrencyPrice, setIntoSearchCurrencyPrice] = useState(0);
 
   const matchCoinSymbol = (symbol: string) => {
-    const coinObject = fullCoinsList.filter(
-      (coin: CoinType) => coin.symbol === symbol
-    );
+    const coinObject = fullCoinsList.filter((coin) => coin.symbol === symbol);
     return coinObject[0].id;
   };
 
@@ -80,22 +67,11 @@ export function Main() {
 
   useEffect(() => {
     async function getPrice() {
-      const fromSearchCoinPricePromise = await getCoinCoefficient(
-        fromSearchCurrency
-      );
-      const intoSearchCoinPricePromise = await getCoinCoefficient(
-        intoSearchCurrency
-      );
+      const fromSearchCoinPrice = await getCoinUsdPrice(fromSearchCurrency);
+      const intoSearchCoinPrice = await getCoinUsdPrice(intoSearchCurrency);
 
-      const fromSearchCoinPrice = await fromSearchCoinPricePromise;
-      const intoSearchCoinPrice = await intoSearchCoinPricePromise;
-
-      setFromSearchCurrencyPrice(
-        await fromSearchCoinPrice[fromSearchCurrency].usd
-      );
-      setIntoSearchCurrencyPrice(
-        await intoSearchCoinPrice[intoSearchCurrency].usd
-      );
+      setFromSearchCurrencyPrice(fromSearchCoinPrice[fromSearchCurrency].usd);
+      setIntoSearchCurrencyPrice(intoSearchCoinPrice[intoSearchCurrency].usd);
     }
     getPrice();
   }, [fromSearchCurrency, intoSearchCurrency]);
