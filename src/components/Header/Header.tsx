@@ -1,8 +1,7 @@
-import meteors from 'assets/animations/meteor-rain.gif';
 import signIn from 'assets/icons/login.png';
 import styles from './styles.module.css';
 
-export function Header() {
+export const Header = () => {
   return (
     <div className={styles.header}>
       <div>CRYPTOPRO</div>
@@ -11,4 +10,4 @@ export function Header() {
       </div>
     </div>
   );
-}
+};

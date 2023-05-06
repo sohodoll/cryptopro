@@ -1,7 +1,7 @@
 import { Footer, Header, Main } from 'components';
 import './App.css';
 
-function App() {
+const App = () => {
   return (
     <div className="wrapper">
       <Header />
@@ -9,6 +9,6 @@ function App() {
       <Footer />
     </div>
   );
-}
+};
 
 export default App;
