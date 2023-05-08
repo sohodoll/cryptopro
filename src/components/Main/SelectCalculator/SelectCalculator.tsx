@@ -4,7 +4,7 @@ import { useGetCurrencyPrice } from '../useGetCurrencyPrice';
 
 export const SelectCalculator = () => {
   const [amount, setAmount] = useState(0);
-  const [result, setResult] = useState<string | number>(0);
+  const [result, setResult] = useState<number | string>(0);
   const [fromCurrency, setFromCurrency] = useState<string>();
   const [intoCurrency, setIntoCurrency] = useState<string>();
 
@@ -25,9 +25,9 @@ export const SelectCalculator = () => {
         amount,
       });
 
-      setResult(calculationResult || 'Too many requests. Come back later.');
+      setResult(calculationResult);
     } catch (error) {
-      console.error(error);
+      setResult('Too many requests. Please Wait.');
     }
   }, [amount, fromCurrency, intoCurrency, defaultCurrency, calculate]);
 

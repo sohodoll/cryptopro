@@ -15,7 +15,7 @@ export const SearchCalculator = () => {
       searchPrompt.split(' ');
 
     const searchAmount = Number(searchPromptAmount);
-    let calculationResult: number;
+    let calculationResult: number | string;
 
     try {
       const matchedSymbolFrom = matchCoinSymbol(fromSearchSymbol);
@@ -34,11 +34,13 @@ export const SearchCalculator = () => {
         });
       }
 
-      setSearchResult(
-        calculationResult || 'Wrong input. Check out the readme file.'
-      );
+      if (calculationResult === 0 || calculationResult) {
+        setSearchResult(calculationResult);
+      } else {
+        setSearchResult('Wrong input. Check out the readme file.');
+      }
     } catch (error) {
-      setSearchResult('Too many requests. Come back later.');
+      setSearchResult('Too many requests. Please Wait.');
     }
   }, [searchPrompt, matchCoinSymbol, getCurrencyPrice, calculate]);
 
