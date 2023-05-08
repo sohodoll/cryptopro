@@ -6,7 +6,7 @@ export const Main = () => {
   return (
     <div className={styles.main}>
       <SearchCalculator />
-      {/* <SelectCalculator /> */}
+      <SelectCalculator />
     </div>
   );
 };

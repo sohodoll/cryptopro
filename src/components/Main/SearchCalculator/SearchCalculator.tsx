@@ -3,6 +3,7 @@ import { getFullCoinsList as fetchFullCoinsList } from 'api/getFullCoinsList';
 import bg from 'assets/images/bitcoin-bg.png';
 import { useCallback, useEffect, useState } from 'react';
 import { ICoin } from 'interfaces';
+import { useGetCurrencyPrice } from '../useGetCurrencyPrice';
 
 export const SearchCalculator = () => {
   const [searchPrompt, setSearchPrompt] = useState('');
@@ -31,7 +32,7 @@ export const SearchCalculator = () => {
           ({ symbol }) => symbol === matchedSymbol
         );
 
-        return coinObject?.[0].id;
+        return coinObject?.[0]?.id;
       }
 
       throw Error('fullCoinsList is empty');
@@ -39,23 +40,7 @@ export const SearchCalculator = () => {
     [fullCoinsList]
   );
 
-  const getCurrencyPrice = useCallback(
-    async (
-      currency: string
-      // eslint-disable-next-line consistent-return
-    ) => {
-      try {
-        const coinPrice = await getCoinUsdPrice(currency);
-
-        const currencyPrice = coinPrice[currency].usd;
-
-        return currencyPrice;
-      } catch (error) {
-        console.error(error);
-      }
-    },
-    []
-  );
+  const { getCurrencyPrice, calculate } = useGetCurrencyPrice();
 
   const onSearchCalculate = useCallback(async () => {
     const [searchPromptAmount, fromSearchSymbol, inText, intoSearchSymbol] =
@@ -70,23 +55,22 @@ export const SearchCalculator = () => {
 
       if (intoSearchSymbol === 'usd') {
         const usdCoinPrice = (await getCurrencyPrice(matchedSymbolFrom)) ?? 0;
-        calculationResult = searchAmount * usdCoinPrice;
+        calculationResult = parseFloat(
+          (searchAmount * usdCoinPrice).toFixed(2)
+        );
       } else {
-        const [fromSearchCurrencyPrice, intoSearchCurrencyPrice] =
-          await Promise.all([
-            getCurrencyPrice(matchedSymbolFrom),
-            getCurrencyPrice(matchedSymbolInto),
-          ]);
-
-        calculationResult =
-          searchAmount * (fromSearchCurrencyPrice! / intoSearchCurrencyPrice!);
+        calculationResult = await calculate({
+          fromCurrency: matchedSymbolFrom,
+          intoCurrency: matchedSymbolInto,
+          amount: searchAmount,
+        });
       }
 
-      setSearchResult(parseFloat(calculationResult.toFixed(2)));
+      setSearchResult(calculationResult);
     } catch (error) {
       console.error(error);
     }
-  }, [searchPrompt, matchCoinSymbol, getCurrencyPrice]);
+  }, [searchPrompt, matchCoinSymbol, getCurrencyPrice, calculate]);
 
   return (
     <div className="flex items-center justify-center">

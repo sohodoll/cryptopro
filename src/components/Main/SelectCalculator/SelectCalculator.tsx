@@ -1,46 +1,36 @@
-import { getTrendingCoinsList } from 'api/getTrendingCoinsList';
-import { useState, useEffect, useCallback } from 'react';
-import { getCoinUsdPrice } from 'api/getCoinUsdPrice';
-
-const trendingCoinsList = await getTrendingCoinsList();
-const defaultCurrency: string = trendingCoinsList.coins[0].item.id;
-
-const coinsElements = trendingCoinsList.coins.map((coin) => (
-  <option key={coin.item.id}>{coin.item.id}</option>
-));
+import { useState, useCallback, useMemo } from 'react';
+import { useGetDefaultCurrency } from '../useGetDefaultCurrency';
+import { useGetCurrencyPrice } from '../useGetCurrencyPrice';
 
 export const SelectCalculator = () => {
+  const { defaultCurrency, trendingCoinsList } = useGetDefaultCurrency();
+
   const [amount, setAmount] = useState(0);
   const [result, setResult] = useState(0);
-  const [fromCurrency, setFromCurrency] = useState(defaultCurrency);
-  const [intoCurrency, setIntoCurrency] = useState(defaultCurrency);
-  const [fromCurrencyPrice, setFromCurrencyPrice] = useState(0);
-  const [intoCurrencyPrice, setIntoCurrencyPrice] = useState(0);
+  const [fromCurrency, setFromCurrency] = useState<string>();
+  const [intoCurrency, setIntoCurrency] = useState<string>();
 
-  const getPrice = useCallback(async () => {
+  const { calculate } = useGetCurrencyPrice();
+
+  const coinsElements = useMemo(() => {
+    return trendingCoinsList?.coins.map((coin) => (
+      <option key={coin.item.id}>{coin.item.id}</option>
+    ));
+  }, [trendingCoinsList]);
+
+  const onCalculate = useCallback(async () => {
     try {
-      const [fromCoinPrice, intoCoinPrice] = await Promise.all([
-        getCoinUsdPrice(fromCurrency),
-        getCoinUsdPrice(intoCurrency),
-      ]);
+      const calculationResult = await calculate({
+        fromCurrency: fromCurrency ?? defaultCurrency ?? '',
+        intoCurrency: intoCurrency ?? defaultCurrency ?? '',
+        amount,
+      });
 
-      setFromCurrencyPrice(fromCoinPrice[fromCurrency].usd);
-      setIntoCurrencyPrice(intoCoinPrice[intoCurrency].usd);
+      setResult(calculationResult);
     } catch (error) {
       console.error(error);
     }
-  }, [fromCurrency, intoCurrency]);
-
-  useEffect(() => {
-    getPrice();
-  }, [fromCurrency, intoCurrency, getPrice]);
-
-  const onCalculate = useCallback(() => {
-    const calculationResult = amount * (fromCurrencyPrice / intoCurrencyPrice);
-    const formattedResult = parseFloat(calculationResult.toFixed(2));
-
-    setResult(formattedResult);
-  }, [amount, fromCurrencyPrice, intoCurrencyPrice]);
+  }, [amount, fromCurrency, intoCurrency, defaultCurrency, calculate]);
 
   return (
     <div className="flex flex-col gap-5">
@@ -64,6 +54,7 @@ export const SelectCalculator = () => {
           className="border border-black rounded"
           name="fromCurrency"
           id="fromCurrency"
+          defaultValue={defaultCurrency}
           onChange={(e) => {
             setFromCurrency(e.target.value);
           }}
@@ -74,6 +65,7 @@ export const SelectCalculator = () => {
           className="border border-black rounded"
           name="intoCurrency"
           id="intoCurrency"
+          defaultValue={defaultCurrency}
           onChange={(e) => {
             setIntoCurrency(e.target.value);
           }}
