@@ -41,10 +41,10 @@ export const SearchCalculator = () => {
   }, [searchPrompt, matchCoinSymbol, getCurrencyPrice, calculate]);
 
   return (
-    <div className="flex items-center justify-center">
+    <div className="flex items-center justify-center gap-8 md:flex-col">
       <img className="w-80" src={bg} alt="bg" />
-      <div className="flex flex-col items-center gap-4">
-        <div className="font-bold">How to use the search prompt:</div>
+      <div className="flex flex-col items-center gap-12">
+        <div className="font-bold text-3xl">Use the search prompt</div>
         <form method="GET">
           <div className="flex gap-4 items-center relative text-gray-600 focus-within:text-gray-400">
             <span className="absolute inset-y-0 left-0 flex items-center pl-2">
@@ -80,7 +80,7 @@ export const SearchCalculator = () => {
             />
             <button
               type="button"
-              className="flex items-center h-10 bg-white hover:bg-gray-100 text-gray-800 font-semibold py-1 px-4 border border-gray-400 rounded shadow"
+              className="text-xl flex items-center h-10 bg-white hover:bg-gray-100 text-gray-800 font-semibold py-1 px-4 border border-gray-400 rounded shadow"
               onClick={onSearchCalculate}
             >
               Calculate

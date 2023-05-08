@@ -1,4 +1,4 @@
-import signIn from 'assets/icons/login.png';
+import btc from 'assets/icons/bitcoin.png';
 import styles from './styles.module.css';
 
 export const Header = () => {
@@ -6,7 +6,7 @@ export const Header = () => {
     <div className={styles.header}>
       <div>CRYPTOPRO</div>
       <div>
-        <img src={signIn} className="w-10" alt="signIn" />
+        <img src={btc} className="w-6" alt="signIn" />
       </div>
     </div>
   );

@@ -2,23 +2,24 @@
 
 * {
   user-select: none;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
 
 html,
 body,
-.wrapper,
-#root {
+#root,
+.wrapper {
   height: 100%;
 }
 
 body {
   font-family: 'Baloo Thambi 2';
-  height: 100%;
 }
 
 .wrapper {
   display: grid;
   grid-template-areas: 'header header' 'main main' ' footer footer';
   grid-template-rows: auto 1fr auto;
-  position: relative;
 }

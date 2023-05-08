@@ -32,16 +32,21 @@ export const SelectCalculator = () => {
   }, [amount, fromCurrency, intoCurrency, defaultCurrency, calculate]);
 
   return (
-    <div className="flex flex-col gap-5">
-      <form className="flex gap-5 text-xl items-center" action="none">
+    <div className="flex flex-col gap-5 items-center">
+      <div className="font-bold text-3xl">Or check out the trending coins</div>
+      <form
+        className="flex gap-5 text-xl items-center mt-12 md:flex-col"
+        action="none"
+      >
         <label className="" htmlFor="amount">
           Amount:
         </label>
         <input
-          className="border border-gray-300 rounded"
+          className="border border-gray-300 rounded md:w-40"
           type="number"
           name="amount"
           id="amount"
+          min={0}
           onInput={(e) => {
             const { target } = e;
             if (target instanceof HTMLInputElement) {
@@ -75,9 +80,7 @@ export const SelectCalculator = () => {
       <div className="text-xl font-bold flex gap-5 items-center justify-center">
         <div>Result:</div>
 
-        <span id="result" className="w-40">
-          {result}
-        </span>
+        <span id="result">{result}</span>
         <button
           onClick={onCalculate}
           type="button"
