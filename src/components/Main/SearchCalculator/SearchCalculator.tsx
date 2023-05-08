@@ -2,10 +2,11 @@ import bg from 'assets/images/bitcoin-bg.png';
 import { useCallback, useState } from 'react';
 import { useGetCurrencyPrice } from '../useGetCurrencyPrice';
 import { useGetMatchedCoinSymbol } from './useGetMatchedCoinSymbol';
+import { ErrorPage } from '../ErrorPage';
 
 export const SearchCalculator = () => {
   const [searchPrompt, setSearchPrompt] = useState('');
-  const [searchResult, setSearchResult] = useState(0);
+  const [searchResult, setSearchResult] = useState<string | number>(0);
 
   const { getCurrencyPrice, calculate } = useGetCurrencyPrice();
   const { matchCoinSymbol } = useGetMatchedCoinSymbol();
@@ -21,7 +22,7 @@ export const SearchCalculator = () => {
       const matchedSymbolFrom = matchCoinSymbol(fromSearchSymbol);
       const matchedSymbolInto = matchCoinSymbol(intoSearchSymbol);
 
-      if (intoSearchSymbol === 'usd') {
+      if (intoSearchSymbol.toLocaleLowerCase() === 'usd') {
         const usdCoinPrice = (await getCurrencyPrice(matchedSymbolFrom)) ?? 0;
         calculationResult = parseFloat(
           (searchAmount * usdCoinPrice).toFixed(2)
@@ -34,9 +35,11 @@ export const SearchCalculator = () => {
         });
       }
 
-      setSearchResult(calculationResult);
+      setSearchResult(
+        calculationResult || 'Wrong input. Check out the readme file.'
+      );
     } catch (error) {
-      console.error(error);
+      setSearchResult('Too many requests. Come back later.');
     }
   }, [searchPrompt, matchCoinSymbol, getCurrencyPrice, calculate]);
 
@@ -91,9 +94,7 @@ export const SearchCalculator = () => {
             className="text-xl font-bold flex gap-5 items-center justify-center mt-6"
           >
             <div>Result:</div>
-            <span>
-              {searchResult || 'Wrong input. Please check out the readme file'}
-            </span>
+            <span>{searchResult}</span>
           </div>
         </form>
       </div>

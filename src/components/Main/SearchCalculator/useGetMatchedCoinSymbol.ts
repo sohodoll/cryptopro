@@ -23,7 +23,7 @@ export const useGetMatchedCoinSymbol = () => {
     (matchedSymbol: string): string | never => {
       if (fullCoinsList) {
         const coinObject = fullCoinsList.filter(
-          ({ symbol }) => symbol === matchedSymbol
+          ({ symbol }) => symbol.toLowerCase() === matchedSymbol.toLowerCase()
         );
 
         return coinObject?.[0]?.id;

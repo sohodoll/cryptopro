@@ -5,9 +5,8 @@ export const Footer = () => {
     <div className={styles.footer}>
       {' '}
       <a className={styles.link} href="https://github.com/sohodoll/cryptopro">
-        Cryptopro Inc.
+        Cryptopro Inc. &nbsp;
       </a>
-      <p>&nbsp;| &nbsp;</p>
       <p>2023</p>
     </div>
   );
