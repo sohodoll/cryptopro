@@ -91,7 +91,9 @@ export const SearchCalculator = () => {
             className="text-xl font-bold flex gap-5 items-center justify-center mt-6"
           >
             <div>Result:</div>
-            <span>{searchResult}</span>
+            <span>
+              {searchResult || 'Wrong input. Please check out the readme file'}
+            </span>
           </div>
         </form>
       </div>

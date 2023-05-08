@@ -10,4 +10,15 @@
   color: white;
   display: flex;
   justify-content: center;
+  font-weight: 700;
+}
+
+.link {
+  background-color: #f3ec78;
+  background-image: linear-gradient(-45deg, #44ffb7, #23a6d5, #23d5ab);
+  background-size: 100%;
+  -webkit-background-clip: text;
+  -moz-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  -moz-text-fill-color: transparent;
 }
