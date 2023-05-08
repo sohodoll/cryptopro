@@ -3,14 +3,13 @@ import { useGetDefaultCurrency } from '../useGetDefaultCurrency';
 import { useGetCurrencyPrice } from '../useGetCurrencyPrice';
 
 export const SelectCalculator = () => {
-  const { defaultCurrency, trendingCoinsList } = useGetDefaultCurrency();
-
   const [amount, setAmount] = useState(0);
   const [result, setResult] = useState(0);
   const [fromCurrency, setFromCurrency] = useState<string>();
   const [intoCurrency, setIntoCurrency] = useState<string>();
 
   const { calculate } = useGetCurrencyPrice();
+  const { defaultCurrency, trendingCoinsList } = useGetDefaultCurrency();
 
   const coinsElements = useMemo(() => {
     return trendingCoinsList?.coins.map((coin) => (
@@ -51,7 +50,7 @@ export const SelectCalculator = () => {
           }}
         />
         <select
-          className="border border-black rounded"
+          className="border border-gray-300 rounded font-bold"
           name="fromCurrency"
           id="fromCurrency"
           defaultValue={defaultCurrency}
@@ -62,7 +61,7 @@ export const SelectCalculator = () => {
           {coinsElements}
         </select>
         <select
-          className="border border-black rounded"
+          className="border border-gray-300 rounded font-bold"
           name="intoCurrency"
           id="intoCurrency"
           defaultValue={defaultCurrency}
