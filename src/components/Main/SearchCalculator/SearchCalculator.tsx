@@ -2,7 +2,6 @@ import bg from 'assets/images/bitcoin-bg.png';
 import { useCallback, useState } from 'react';
 import { useGetCurrencyPrice } from '../useGetCurrencyPrice';
 import { useGetMatchedCoinSymbol } from './useGetMatchedCoinSymbol';
-import { ErrorPage } from '../ErrorPage';
 
 export const SearchCalculator = () => {
   const [searchPrompt, setSearchPrompt] = useState('');
