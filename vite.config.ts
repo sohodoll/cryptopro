@@ -32,4 +32,7 @@ export default defineConfig({
     alias,
   },
   appType: 'spa',
+  server: {
+    port: 3001,
+  },
 });

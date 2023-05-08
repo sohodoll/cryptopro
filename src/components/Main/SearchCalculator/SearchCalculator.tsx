@@ -1,68 +1,92 @@
 import { getCoinUsdPrice } from 'api/getCoinUsdPrice';
-import { getFullCoinsList } from 'api/getFullCoinsList';
-import { getTrendingCoinsList } from 'api/getTrendingCoinsList';
+import { getFullCoinsList as fetchFullCoinsList } from 'api/getFullCoinsList';
 import bg from 'assets/images/bitcoin-bg.png';
 import { useCallback, useEffect, useState } from 'react';
-
-const trendingCoinsList = await getTrendingCoinsList();
-const defaultCurrency: string = trendingCoinsList.coins[0].item.id;
-const fullCoinsList = await getFullCoinsList();
+import { ICoin } from 'interfaces';
 
 export const SearchCalculator = () => {
   const [searchPrompt, setSearchPrompt] = useState('');
-  const [searchAmount, setSearchAmount] = useState(0);
   const [searchResult, setSearchResult] = useState(0);
-  const [fromSearchCurrency, setFromSearchCurrency] = useState(defaultCurrency);
-  const [intoSearchCurrency, setIntoSearchCurrency] = useState(defaultCurrency);
-  const [fromSearchCurrencyPrice, setFromSearchCurrencyPrice] = useState(0);
-  const [intoSearchCurrencyPrice, setIntoSearchCurrencyPrice] = useState(0);
 
-  const matchCoinSymbol = (symbol: string) => {
-    const coinObject = fullCoinsList.filter((coin) => coin.symbol === symbol);
-    return coinObject[0].id;
-  };
+  const [fullCoinsList, setFullCoinsList] = useState<ICoin[]>();
 
-  const onSearchCalculate = async () => {
-    const searchArray = searchPrompt.split(' ');
-    const searchPromptAmount = Number(searchArray[0]);
-    const fromSearchSymbol = searchArray[1];
-    const intoSearchSymbol = searchArray[3];
-
-    setFromSearchCurrency(matchCoinSymbol(fromSearchSymbol));
-    setSearchAmount(searchPromptAmount);
-
-    setTimeout(async () => {
-      if (intoSearchSymbol === 'usd') {
-        const usdCoinPrice = await getCoinUsdPrice(fromSearchCurrency);
-        const calculationResult =
-          searchAmount * usdCoinPrice[fromSearchCurrency].usd;
-        setSearchResult(calculationResult);
-      } else {
-        setIntoSearchCurrency(matchCoinSymbol(searchArray[3]));
-        const calculationResult =
-          searchAmount * (fromSearchCurrencyPrice / intoSearchCurrencyPrice);
-        setSearchResult(parseFloat(calculationResult.toFixed(2)));
-      }
-    }, 2000);
-  };
-
-  const getSearchPrice = useCallback(async () => {
+  const getFullCoinsList = useCallback(async () => {
     try {
-      const [fromSearchCoinPrice, intoSearchCoinPrice] = await Promise.all([
-        getCoinUsdPrice(fromSearchCurrency),
-        getCoinUsdPrice(intoSearchCurrency),
-      ]);
+      const fetchedCoinsList = await fetchFullCoinsList();
 
-      setFromSearchCurrencyPrice(fromSearchCoinPrice[fromSearchCurrency].usd);
-      setIntoSearchCurrencyPrice(intoSearchCoinPrice[intoSearchCurrency].usd);
+      setFullCoinsList(fetchedCoinsList);
     } catch (error) {
       console.error(error);
     }
-  }, [fromSearchCurrency, intoSearchCurrency]);
+  }, []);
 
   useEffect(() => {
-    getSearchPrice();
-  }, [fromSearchCurrency, intoSearchCurrency, getSearchPrice]);
+    getFullCoinsList();
+  }, [getFullCoinsList]);
+
+  const matchCoinSymbol = useCallback(
+    (matchedSymbol: string): string | never => {
+      if (fullCoinsList) {
+        const coinObject = fullCoinsList.filter(
+          ({ symbol }) => symbol === matchedSymbol
+        );
+
+        return coinObject?.[0].id;
+      }
+
+      throw Error('fullCoinsList is empty');
+    },
+    [fullCoinsList]
+  );
+
+  const getCurrencyPrice = useCallback(
+    async (
+      currency: string
+      // eslint-disable-next-line consistent-return
+    ) => {
+      try {
+        const coinPrice = await getCoinUsdPrice(currency);
+
+        const currencyPrice = coinPrice[currency].usd;
+
+        return currencyPrice;
+      } catch (error) {
+        console.error(error);
+      }
+    },
+    []
+  );
+
+  const onSearchCalculate = useCallback(async () => {
+    const [searchPromptAmount, fromSearchSymbol, inText, intoSearchSymbol] =
+      searchPrompt.split(' ');
+
+    const searchAmount = Number(searchPromptAmount);
+    let calculationResult: number;
+
+    try {
+      const matchedSymbolFrom = matchCoinSymbol(fromSearchSymbol);
+      const matchedSymbolInto = matchCoinSymbol(intoSearchSymbol);
+
+      if (intoSearchSymbol === 'usd') {
+        const usdCoinPrice = (await getCurrencyPrice(matchedSymbolFrom)) ?? 0;
+        calculationResult = searchAmount * usdCoinPrice;
+      } else {
+        const [fromSearchCurrencyPrice, intoSearchCurrencyPrice] =
+          await Promise.all([
+            getCurrencyPrice(matchedSymbolFrom),
+            getCurrencyPrice(matchedSymbolInto),
+          ]);
+
+        calculationResult =
+          searchAmount * (fromSearchCurrencyPrice! / intoSearchCurrencyPrice!);
+      }
+
+      setSearchResult(parseFloat(calculationResult.toFixed(2)));
+    } catch (error) {
+      console.error(error);
+    }
+  }, [searchPrompt, matchCoinSymbol, getCurrencyPrice]);
 
   return (
     <div className="flex items-center justify-center">

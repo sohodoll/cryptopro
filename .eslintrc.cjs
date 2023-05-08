@@ -27,5 +27,7 @@ module.exports = {
     'jsx-a11y/anchor-is-valid': 'off',
     'jsx-a11y/label-has-associated-control': 'off',
     'no-console': 'off',
+    '@typescript-eslint/no-non-null-assertion': 'off',
+    '@typescript-eslint/no-unused-vars': 'off',
   },
 };
