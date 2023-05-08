@@ -4,9 +4,11 @@
 
 - Cryptopro is a simple crypto calculator base on the [CoinGecko](https://www.coingecko.com/en/api/documentation) APIs.
 - This Free API allows **no more than ~10-20** requests per minute, so please do not spam your requests or you will see the '429' Error in your console.
-- Please wait around **3-5 minutes\*\*** in case of sending too many requests.
+- If something does not work, you most likely exceeded the number of requests per minute.
+- Please wait around **3-5 minutes** in case of sending too many requests and reload the app.
 - You can try the search prompt calculation or check out the trending coins and convert one into another.
 - Deploy link: https://cryptopros.netlify.app/
+- Development branch: https://github.com/sohodoll/cryptopro/tree/develop
 
 ## Using the search prompt
 
