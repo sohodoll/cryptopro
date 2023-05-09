@@ -32,7 +32,7 @@ export const SelectCalculator = () => {
   }, [amount, fromCurrency, intoCurrency, defaultCurrency, calculate]);
 
   return (
-    <div className="flex flex-col gap-5 items-center">
+    <div className="flex flex-col gap-5 items-center mb-10">
       <div className="font-bold text-3xl">Or check out the trending coins</div>
       <form
         className="flex gap-5 text-xl items-center mt-12 md:flex-col"
